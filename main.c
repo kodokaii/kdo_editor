@@ -6,7 +6,7 @@
 /*   By: nlaerema <nlaerema@student.42lehavre.fr>	+#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:58:17 by nlaerema          #+#    #+#             */
-/*   Updated: 2024/01/12 13:03:21 by nlaerema         ###   ########.fr       */
+/*   Updated: 2024/01/12 13:37:53 by nlaerema         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ int	main(void)
 			{
 				sprintf(prompt, "%ld > ", file.current_line);
 				line = readline(prompt);
-				if (!strcmp(line, "EOF"))
+				if (!line || !strcmp(line, "EOF"))
 					break ;
 				else if (line[0] == 'm' && is_valid_number(line + 1))
 				{
