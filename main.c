@@ -6,7 +6,7 @@
 /*   By: nlaerema <nlaerema@student.42lehavre.fr>	+#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:58:17 by nlaerema          #+#    #+#             */
-/*   Updated: 2024/01/12 13:37:53 by nlaerema         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:35:50 by nlaerema         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,51 +124,66 @@ int	save_file(t_file *file)
 	return (EXIT_SUCCESS);
 }
 
+void	new_line(void)
+{
+	ft_putchar_fd('\n', 1);
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
+
 int	main(void)
 {
 	static t_file	file = {};
 	char			*file_name;
+	char			*trimmed_file_name;
 	char			*line;
 	char			prompt[12];
 
 	while (1)
 	{
 		file_name = readline("file name > ");
-		if (open_file(&file, file_name))
+		if (!file_name)
+		{
+			new_line();
+			continue ;
+		}
+		trimmed_file_name = ft_strtrim(file_name, " \t");
+		free(file_name);
+		if (open_file(&file, trimmed_file_name))
 		{
 			perror("Can't open file");
+			continue ;
 		}
-		else
+		while (1)
 		{
-			while (1)
+			sprintf(prompt, "%ld > ", file.current_line);
+			line = readline(prompt);
+			if (!line)
+				new_line();
+			if (!line || !strcmp(line, "EOF"))
+				break ;
+			else if (line[0] == 'm' && is_valid_number(line + 1))
 			{
-				sprintf(prompt, "%ld > ", file.current_line);
-				line = readline(prompt);
-				if (!line || !strcmp(line, "EOF"))
-					break ;
-				else if (line[0] == 'm' && is_valid_number(line + 1))
-				{
-					if (move_line(&file, line))
-						fprintf(stderr, "move error !\n");
-				}
-				else if (line[0] == 'p' && line[1] == '\0')
-				{
-					if (print_line(&file))
-						fprintf(stderr, "print error !\n");
-				}
-				else if (line[0] == 's' && line[1] == '\0')
-				{
-					if (save_file(&file))
-						fprintf(stderr, "save error !\n");
-				}
-				else
-				{
-					if (write_line(&file, line))
-						fprintf(stderr, "write error !\n");
-				}
+				if (move_line(&file, line))
+					fprintf(stderr, "move error !\n");
 			}
-			ft_lstclear(&file.line, free);
+			else if (line[0] == 'p' && line[1] == '\0')
+			{
+				if (print_line(&file))
+					fprintf(stderr, "print error !\n");
+			}
+			else if (line[0] == 's' && line[1] == '\0')
+			{
+				if (save_file(&file))
+					fprintf(stderr, "save error !\n");
+			}
+			else
+			{
+				if (write_line(&file, line))
+					fprintf(stderr, "write error !\n");
+			}
 		}
-		free(file_name);
+		ft_lstclear(&file.line, free);
+		free(trimmed_file_name);
 	}
 }
