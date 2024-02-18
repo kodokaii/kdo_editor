@@ -23,7 +23,7 @@ $(LIBFT): $(FT)
 	$(MAKE) -C $(FT)
 
 $(FT):
-	$(CLONE) https://github.com/kodokaii/libft_plus_plus.git $(FT)
+	$(CLONE) https://github.com/kodokaii/libft_full.git $(FT)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
